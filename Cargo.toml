@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 #graphul = { version = "1.0.1"}
 rocket = { version = "0.5.0-rc.3", features = ["json"] }
+serde = { version = "1.0.189", features = ["derive"] }
 tokio = { version = "1.0", features = ["full"] }
 surrealdb = "1.0.0"
