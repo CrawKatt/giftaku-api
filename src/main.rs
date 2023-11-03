@@ -1,110 +1,59 @@
-use rocket::tokio::fs::File;
-use rocket::serde::json::Json;
-use rocket::serde::Serialize;
+use rocket::serde::json::{Json, serde_json};
 use std::path::{Path, PathBuf};
 use once_cell::sync::Lazy;
-use mongodb::bson::doc;
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
 use rocket::{get, launch, post, routes};
-use rocket::fs::FileServer;
-use rocket::http::Status;
-use tokio::io::AsyncReadExt;
-use rocket::data::ByteUnit;
+use rocket::fs::{FileServer, TempFile};
+use rocket::fs::NamedFile;
 use surrealdb::engine::local::{Db, Mem};
 use surrealdb::Surreal;
+use std::env;
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
-#[derive(Serialize)]
-struct GifResponse {
-    action: String,
-    anime: String,
-    gif_id: i32,
-    url: String,
-}
-
-/// ruta para obtener un gif
-/// Ejemplo:
-/// `127.0.0.1:8000/api/slap/<anime-aqui>/123`
-#[get("/api/<action>/<anime>/<gif_id>")]
-async fn get_gif(action: String, anime: String, gif_id: i32) -> Option<Json<GifResponse>> {
-    let url = format!("localhost:8000/static/{}.gif", gif_id);
-
-    Some(Json(GifResponse {
-        action,
-        anime,
-        gif_id,
-        url,
-    }))
-}
-
 #[launch]
-#[tokio::main]
 async fn rocket() -> _ {
-
     DB.connect::<Mem>(()).await.unwrap_or_else(|why| {
         panic!("Could not connect to database: {}", why);
     });
 
     rocket::build()
-        .mount("/", routes![files, get_gif, upload, get_file])
+        .mount("/", routes![upload, files, index])
         .mount("/static", FileServer::from("static"))
 }
 
-#[get("/<file>")]
-async fn files(file: PathBuf) -> Option<Json<String>> {
-    let mut buffer = Vec::new();
-    let mut file = File::open(Path::new("static/").join(file)).await.ok()?;
-    let file_name = file.read_to_end(&mut buffer).await.ok()?;
-    let url = format!("data:image/gif/{}", file_name);
-    Some(Json(url))
+#[get("/")]
+async fn index() -> Option<NamedFile> {
+    NamedFile::open("static/index.html").await.ok()
+}
+
+/// Uso: `curl -X GET http://localhost:8000/<file_name>`
+#[get("/api/<file..>")]
+async fn files(file: PathBuf) -> Result<NamedFile, std::io::Error> {
+    NamedFile::open(Path::new("/tmp/").join(file)).await
 }
 
 /// # Uso:
-/// `curl -F "upload=@<file>" localhost:8000/api/upload`
-#[post("/api/upload", format = "multipart/form-data", data = "<upload>")]
-async fn upload(upload: rocket::Data<'_>) -> Result<Json<String>, Status> {
-    // genera el id aleatorio
-    let mut file;
+/// `curl -X POST -H "Content-Type: text/plain" --data-binary @<file> http://127.0.0.1:8000/`
+/// `path: localhost:8000/api/upload`
+/// todo: cambiar la ruta a ./static/
+#[post("/", data = "<upload>")]
+async fn upload(mut upload: TempFile<'_>) -> Result<Json<String>, ()> {
+    // Genera el nombre del archivo
     let mut rng = StdRng::from_entropy();
     let random_string: u64 = rng.gen();
     let file_name = format!("{}", random_string);
 
-    // crea el archivo
-    if let Err(_) = File::create(&file_name).await {
-        return Err(Status::InternalServerError);
-    } else {
-        file = File::create(&file_name).await.unwrap();
-    }
+    // Guarda el archivo en el directorio temporal
+    let temp = env::temp_dir();
+    let path = Path::new(&temp).join(&file_name);
+    let Ok(_) = upload.persist_to(&path).await else {
+        eprintln!("Cannot create temp file in {}", path.display());
+        return Err(());
+    };
 
-    if let Err(_) = upload.open(ByteUnit::default()).stream_to(&mut file).await {
-        return Err(Status::InternalServerError);
-    }
-
-    DB.use_ns("api-namespace").use_db("api-db").await.unwrap_or_else(|why| {
-        println!("Could not connect to database: {}", why);
-    });
-
-    let data = file_name.as_bytes().to_vec();
-
-    DB.set("api-collection", data.clone()).await.unwrap_or_else(|why| {
-        println!("Could not connect to database: {}", why);
-    });
-
-    println!("File uploaded: {:?}", data);
-    println!("File name: {:?}", file_name);
-
-    //database(&file_name).await.expect("ERROR");
-
-    Ok(Json(format!("{{'url': '{}'}}", &file_name)))
-}
-
-#[get("/api/<file>")]
-async fn get_file(file: String) -> Option<Json<String>> {
-    let mut buffer = Vec::new();
-    let mut file = File::open(Path::new("./").join(file)).await.ok()?;
-    let file_name = file.read_to_end(&mut buffer).await.ok()?;
-    let url = format!("data:image/gif/{}", file_name);
-    Some(Json(url))
+    // Envía la respuesta con el nombre del archivo en formato json
+    let json = serde_json::json!({"url: http://localhost:8000/":file_name}).to_string();
+    Ok(Json(json))
 }
