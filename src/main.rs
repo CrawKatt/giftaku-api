@@ -43,7 +43,7 @@ async fn upload(mut upload: TempFile<'_>) -> Result<Json<String>, ()> {
     // Genera el nombre del archivo
     let mut rng = StdRng::from_entropy();
     let random_string: u64 = rng.gen();
-    let file_name = format!("{}", random_string);
+    let file_name = format!("{}.gif", random_string);
 
     // Guarda el archivo en el directorio temporal
     let temp = env::temp_dir();
@@ -54,6 +54,6 @@ async fn upload(mut upload: TempFile<'_>) -> Result<Json<String>, ()> {
     };
 
     // Envía la respuesta con el nombre del archivo en formato json
-    let json = serde_json::json!({"url: http://localhost:8000/":file_name}).to_string();
+    let json = serde_json::json!({"url: http://localhost:8000/api/":file_name}).to_string();
     Ok(Json(json))
 }
