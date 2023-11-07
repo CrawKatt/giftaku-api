@@ -13,8 +13,6 @@ use uuid::Uuid;
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
-//const URL: &str = "http://localhost:8000/";
-
 #[launch]
 async fn rocket() -> _ {
     DB.connect::<Mem>(()).await.unwrap_or_else(|why| {
@@ -27,8 +25,8 @@ async fn rocket() -> _ {
 }
 
 /// Buscar el GIF de forma aleatoria en `./upload/`
-fn random_file() -> std::io::Result<String> {
-    let paths: Vec<_> = fs::read_dir("./upload")?
+fn random_file(path: &str) -> std::io::Result<String> {
+    let paths: Vec<_> = fs::read_dir(path)?
         .filter_map(Result::ok)
         .filter(|entry| entry.path().extension() == Some(std::ffi::OsStr::new("gif")))
         .collect();
@@ -43,10 +41,11 @@ fn random_file() -> std::io::Result<String> {
 
 #[get("/api/random")]
 async fn random_gif() -> Result<NamedFile, std::io::Error> {
-    let file_name = match random_file() {
-        Ok(name) => name,
-        Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::Other, "No files in directory")),
+    let path = ".upload/";
+    let Ok(file_name) = random_file(path) else {
+        return Err(std::io::Error::new(std::io::ErrorKind::Other, "No files in directory"));
     };
+
     println!("file name: {}", file_name);
     NamedFile::open(Path::new("./upload/").join(file_name)).await
 }
@@ -71,7 +70,7 @@ async fn upload(mut upload: TempFile<'_>) -> Result<Json<String>, BadRequest<&st
 
     // Genera el nombre del archivo
     let uuid = Uuid::new_v4();
-    let file_name = format!("{}.gif", uuid);
+    let file_name = format!("{uuid}.gif");
 
     // Guarda el archivo en el directorio de archivos upload
     let path = Path::new("./upload").join(&file_name);
