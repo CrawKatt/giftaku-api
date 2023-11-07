@@ -1,11 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+  <meta charset="UTF-8" />
+  <title>GIFtaku Dashboard</title>
 </head>
 <body>
-  <h1>Hello, World.</h1>
-  <h2>todo: Crear un FrontEnd de botones que haga la llamada al método POST</h2>
+<h1>GIFtaku Dashboard</h1>
+<form id="form">
+  <label>Select a gif: </label>
+  <input type="file" name="file" id="file" />
+  <br />
+  <input type="submit" value ="Upload" />
+</form>
+<label for="file-name">File Name:</label>
+<input type="text" id="file-name" name="file-name">
+<button id="get-file">Get File</button>
+<div id="image-container"></div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  // POST
+  const form = document.querySelector("#form");
+  const fileInput = document.querySelector("#file");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const file = fileInput.files[0];
+    axios({
+      method: "post",
+      url: "http://localhost:8000/",
+      data: file,
+      headers: { "Content-Type": file.type },
+    })
+      .then(response => console.log(response.data))
+      .catch((e) => console.error(e));
+  });
+
+  // GET
+  document.getElementById('get-file').addEventListener('click', function() {
+    const fileName = document.getElementById('file-name').value;
+
+    axios({
+      url: 'http://localhost:8000/api/' + fileName,
+      method: 'GET',
+      responseType: 'blob', // important
+    })
+      .then(function (response) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const img = document.createElement('img');
+        img.src = url;
+        document.getElementById('image-container').appendChild(img);
+      });
+  });
+</script>
 </body>
 </html>
