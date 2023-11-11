@@ -3,11 +3,14 @@ body {
 }
 
 button {
-    background-color: cornflowerblue;
-    color: #fff;
-    border: 1px solid #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
+    font-size: 25px;
+    width: 8em;
+    height: 2em;
+    color: orange;
+    background-color: #333;
+    border-left: 0.08em solid;
+    position: relative;
+    margin-top: 0.8em;
     cursor: pointer;
 }
 
