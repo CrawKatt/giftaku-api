@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>GIFtaku Dashboard</title>
-  <link rel="stylesheet" href="static/css/styles.css"/>
-</head>
-<body>
-<h1>GIFtaku Dashboard</h1>
-<form id="form">
-  <label>Select a gif: </label>
-  <input type="file" name="file" id="file" />
-  <br />
-  <label>Select an action: </label>
-  <select id="action">
-    <option value="slap">Slap</option>
-    <option value="kick">Kick</option>
-  </select>
-  <input type="submit" value ="Upload" />
-</form>
-<label for="file-name">File Name:</label>
-<input type="text" id="file-name" name="file-name">
-<button id="get-file">Get File</button>
-<div id="image-container"></div>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src = "static/js/index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>GIFtaku Dashboard</title>
+    <link rel="stylesheet" href="static/css/styles.css"/>
+  </head>
+  <body>
+    <h1>GIFtaku Dashboard</h1>
+    <form id="form">
+      <label>Select a gif: </label>
+      <input type="file" name="file" id="file" />
+      <br />
+      <label>Select an action: </label>
+        <select id="action">
+          <option value="slap">Slap</option>
+          <option value="kick">Kick</option>
+      </select>
+      <input type="submit" value ="Upload" />
+    </form>
+    <label>Select an action</label>
+    <select id="action-get">
+      <option value="slap">Slap</option>
+      <option value="kick">Kick</option>
+    </select>
+    <button id="get-file">Get File</button>
+    <div id="image-container"></div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="static/js/index.js"></script>
+  </body>
 </html>

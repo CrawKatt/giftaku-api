@@ -1,18 +1,22 @@
-//const axios = require('axios');
-
 // POST
 const form = document.querySelector("#form");
 const fileInput = document.querySelector("#file");
+const actionSelect = document.querySelector("#action");
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const file = fileInput.files[0];
+    const action = actionSelect.value;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("action", action);
+
     axios({
         method: "post",
         url: "http://localhost:8000/",
-        data: file,
-        headers: { "Content-Type": file.type },
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
     })
         .then(response => console.log(response.data))
         .catch((e) => console.error(e));
@@ -20,10 +24,10 @@ form.addEventListener("submit", (e) => {
 
 // GET
 document.getElementById('get-file').addEventListener('click', function() {
-    const fileName = document.getElementById('file-name').value;
+    const selectedAction = document.getElementById('action-get').value; // Obtener la acción seleccionada desde el selector
 
     axios({
-        url: 'http://localhost:8000/api/' + fileName,
+        url: 'http://localhost:8000/api/' + selectedAction, // Concatenar la acción a la URL
         method: 'GET',
         responseType: 'blob', // important
     })
