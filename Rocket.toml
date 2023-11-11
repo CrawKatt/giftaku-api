@@ -5,11 +5,12 @@ temp_dir = "./upload"
 cli_colors = true
 
 [default.limits]
-form = "64 kB"
-json = "1 MiB"
-msgpack = "2 MiB"
-"file/jpg" = "5 MiB"
-"file/gif" = "5 MiB"
+form = "20 MiB"
+data-form = "20 MiB"
+json = "20 MiB"
+msgpack = "20 MiB"
+"file/jpg" = "20 MiB"
+"file/gif" = "20 MiB"
 
 [default.shutdown]
 ctrlc = true
