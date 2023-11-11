@@ -1,11 +1,11 @@
 use rocket::fs::NamedFile;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use rocket::get;
 use std::fs;
 use rand::Rng;
 
 /// Buscar el GIF de forma aleatoria en `./upload/`
-fn random_file(path: &str) -> std::io::Result<String> {
+fn random_file(path: &String) -> std::io::Result<String> {
     let paths: Vec<_> = fs::read_dir(path)?
         .filter_map(Result::ok)
         .filter(|entry| entry.path().extension() == Some(std::ffi::OsStr::new("gif")))
@@ -16,32 +16,20 @@ fn random_file(path: &str) -> std::io::Result<String> {
         return Ok(paths[index].file_name().to_string_lossy().into_owned())
     }
 
-    Err(std::io::Error::new(std::io::ErrorKind::Other, "No files in directory"))
+    Err(std::io::Error::new(std::io::ErrorKind::Other, "Error in random_file function: No files in directory"))
 }
 
-#[get("/api/random")]
-pub async fn random_gif() -> Result<NamedFile, std::io::Error> {
-    let path = ".upload/";
-    let Ok(file_name) = random_file(path) else {
-        return Err(std::io::Error::new(std::io::ErrorKind::Other, "No files in directory"));
+#[get("/api/<action>")]
+pub async fn get_gif(action: &str) -> Result<NamedFile, std::io::Error> {
+    let path = format!("./upload/{action}");
+    let Ok(file_name) = random_file(&path) else {
+        return Err(std::io::Error::new(std::io::ErrorKind::Other, "Error in get_gif function: No files in directory"));
     };
 
-    println!("file name: {}", file_name);
-    NamedFile::open(Path::new("./upload/").join(file_name)).await
+    NamedFile::open(Path::new("./upload/").join(action).join(file_name)).await
 }
 
 #[get("/")]
 pub async fn index() -> Option<NamedFile> {
     NamedFile::open("static/index.html").await.ok()
-}
-
-/// Uso: `curl -X GET http://localhost:8000/<file_name>`
-#[get("/api/<file..>")]
-pub async fn files(file: PathBuf) -> Result<NamedFile, std::io::Error> {
-    NamedFile::open(Path::new("./upload/").join(file)).await
-}
-
-#[get("/upload/slap/<file>")]
-pub async fn slap(file: PathBuf) -> Result<NamedFile, std::io::Error> {
-    NamedFile::open(Path::new("./upload/slap/").join(file)).await
 }

@@ -5,8 +5,8 @@ use surrealdb::Surreal;
 use once_cell::sync::Lazy;
 
 mod routes;
-use crate::routes::posts::{upload, upload_slap};
-use crate::routes::gets::{files, index, random_gif, slap};
+use crate::routes::posts::upload;
+use crate::routes::gets::{index, get_gif};
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 
@@ -17,7 +17,7 @@ async fn rocket() -> _ {
     });
 
     rocket::build()
-        .mount("/", routes![upload, files, index, random_gif, upload_slap, slap])
+        .mount("/", routes![upload, index, get_gif])
         .mount("/static", FileServer::from("static/"))
 }
 
