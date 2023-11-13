@@ -8,9 +8,11 @@ form.addEventListener("submit", (e) => {
 
     const file = fileInput.files[0];
     const action = actionSelect.value;
+    const animeName = document.querySelector("#anime_name").value;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("action", action);
+    formData.append("anime_name", animeName);
 
     axios({
         method: "post",
