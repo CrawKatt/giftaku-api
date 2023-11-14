@@ -8,9 +8,11 @@ form.addEventListener("submit", (e) => {
 
     const file = fileInput.files[0];
     const action = actionSelect.value;
+    const animeName = document.querySelector("#anime_name").value;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("action", action);
+    formData.append("anime_name", animeName);
 
     axios({
         method: "post",
@@ -29,12 +31,11 @@ document.getElementById('get-file').addEventListener('click', function() {
     axios({
         url: 'http://localhost:8000/api/' + selectedAction, // Concatenar la acción a la URL
         method: 'GET',
-        responseType: 'blob', // important
+        responseType: 'json', // important
     })
         .then(function (response) {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const img = document.createElement('img');
-            img.src = url;
-            document.getElementById('image-container').appendChild(img);
+            const responseContainer = document.createElement('pre');
+            responseContainer.textContent = JSON.stringify(response.data, null, 2);
+            document.getElementById('image-container').appendChild(responseContainer);
         });
 });
