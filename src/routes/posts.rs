@@ -31,7 +31,7 @@ pub struct SaveData {
 }
 
 impl SaveData {
-    fn new(file_name: String, anime_name: String, url: String) -> Self {
+    pub fn new(file_name: String, anime_name: String, url: String) -> Self {
         Self {
             file_name,
             anime_name,
@@ -43,7 +43,7 @@ impl SaveData {
     async fn save_data_to_db(&self) -> SurrealResult<()> {
         DB.use_ns("api-namespace").use_db("api-db").await?;
         let data = SaveData::new(self.file_name.clone(), self.anime_name.clone(), self.url.clone());
-        let created: Vec<SaveData> = DB.create("api-database").content(data).await?;
+        let created: Vec<SaveData> = DB.create("api_uploads").content(data).await?; // NO USAR "-" COMO REEMPLAZO A LOS ESPACIOS AL CREAR EL RESOURCE, SURREALDB LO INTERPRETA COMO UNA OPERACIÓN
         println!("Created: {:#?}", created);
         Ok(())
     }
@@ -80,7 +80,7 @@ impl UploadData<'_> {
     }
 
     fn get_url(&self, file_name: &String) -> String {
-        format!("http://localhost:8000/{action}/{file_name}", action = self.action, file_name = file_name)
+        format!("http://localhost:8000/api/{action}/{file_name}", action = self.action, file_name = file_name)
     }
 }
 
