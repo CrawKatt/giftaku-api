@@ -1,31 +1,106 @@
 body {
-    background-color: #333;
+    background-color: #282c35;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
 }
 
-button {
-    font-size: 25px;
-    width: 8em;
-    height: 2em;
+.container {
+    max-width: 671px;
+    margin: 0;
+    padding: 20px;
+    background-color: #444;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#gif-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%; /* ajustar según sea necesario */
+    padding: 20px;
+}
+
+h1 {
     color: orange;
-    background-color: #333;
-    border-left: 0.08em solid;
-    position: relative;
-    margin-top: 0.8em;
-    cursor: pointer;
+    text-align: center;
+    font-size: 36px;
+}
+
+form {
+    margin-top: 20px;
 }
 
 label {
-    color: #fff;
-    font-size: 20px;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 18px;
 }
 
-input {
-    font-size: 15px;
+input,
+select {
+    width: calc(100% - 20px);
+    margin-bottom: 15px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #fff;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: orange;
+    color: #333;
+    cursor: pointer;
+}
+
+button,
+input[type="submit"] {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+button {
+    background-color: #333;
+    color: orange;
+}
+
+#image-container {
+    text-align: left;
+    margin-top: 20px;
 }
 
 img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+select {
+    appearance: none;
     padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    background-color: #555;
+    color: #fff;
+}
+
+.json-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow: auto;
+    max-height: 400px; /* Ajusta según sea necesario */
+}
+
+.json-content {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    white-space: pre-wrap;
 }

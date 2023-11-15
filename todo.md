@@ -1,0 +1,2 @@
+- [ ] Añadir sistema de autentificación para administradores
+- [ ] Cambiar localhost por un dominio en las routes

@@ -8,6 +8,8 @@ use serde::Serialize;
 use crate::DB;
 use crate::routes::posts::SaveData;
 
+const ENDPOINTS: [&str; 5] = ["slap", "shoot", "kick", "punch", "cringe"];
+
 #[derive(Serialize)]
 pub struct ResponseData {
     pub anime_name: String,
@@ -74,6 +76,25 @@ pub async fn get_gif(action: &str, file_name: &str) -> Option<NamedFile> {
     NamedFile::open(Path::new("./upload/")
         .join(action)
         .join(file_name)).await.ok()
+}
+
+#[get("/api/endpoints")]
+pub async fn get_endpoints() -> String {
+    let mut json_endpoints = String::from("{");
+
+    // Agrega los endpoints predeterminados
+    for (index, endpoint) in ENDPOINTS.iter().enumerate() {
+        json_endpoints.push_str(format!(r#""{}":{{"format":"gif"}}"#, endpoint).as_str());
+
+        // Agrega una coma si no es el último elemento
+        if index < ENDPOINTS.len() - 1 {
+            json_endpoints.push(',');
+        }
+    }
+
+    json_endpoints.push('}');
+
+    json_endpoints
 }
 
 #[get("/")]
