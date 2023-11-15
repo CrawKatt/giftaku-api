@@ -13,14 +13,14 @@ use crate::{DB, RocketResult};
 #[derive(FromForm)]
 pub struct UploadData<'a> {
     file: TempFile<'a>,
-    action: String,
-    anime_name: String,
+    action: &'a str,
+    anime_name: &'a str,
 }
 
 #[derive(Serialize)]
 struct GifData<'a> {
-    anime_name: &'a String,
-    url: &'a String,
+    anime_name: &'a str,
+    url: &'a str,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -50,7 +50,7 @@ impl SaveData {
 }
 
 impl <'a>GifData<'a> {
-    fn new(anime_name: &'a String, url: &'a String) -> Self {
+    fn new(anime_name: &'a str, url: &'a str) -> Self {
         Self {
             anime_name,
             url,
@@ -94,12 +94,12 @@ pub async fn upload(mut upload: Form<UploadData<'_>>) -> RocketResult<Json<Strin
     upload.check_type()?;
 
     // Guarda el GIF y devuelve el nombre del archivo
-    let response = upload.save_file().await?;
+    let response = &upload.save_file().await?;
 
     // Crea un objeto GifData y lo convierte a json
-    let data = GifData::new(&upload.anime_name, &response);
+    let data = GifData::new(upload.anime_name, response);
 
-    let database_data = SaveData::new(response.clone(), upload.anime_name.clone(), upload.get_url(&response));
+    let database_data = SaveData::new(response.to_owned(), upload.anime_name.to_string(), upload.get_url(response));
     database_data.save_data_to_db().await.unwrap_or_else(|why| {
         eprintln!("Cannot save data to database: {why}");
     });
