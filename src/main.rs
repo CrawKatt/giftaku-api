@@ -6,7 +6,7 @@ use once_cell::sync::Lazy;
 
 mod routes;
 use crate::routes::posts::upload;
-use crate::routes::gets::{index, send_result, get_gif};
+use crate::routes::gets::{index, send_result, get_gif, get_endpoints};
 
 pub static DB: Lazy<Surreal<Db>> = Lazy::new(Surreal::init);
 pub type RocketResult<T> = Result<T, rocket::response::status::BadRequest<String>>;
@@ -18,7 +18,7 @@ async fn rocket() -> _ {
     });
 
     rocket::build()
-        .mount("/", routes![upload, index, send_result, get_gif])
+        .mount("/", routes![upload, index, send_result, get_gif, get_endpoints])
         .mount("/static", FileServer::from("static/"))
 }
 
