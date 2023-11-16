@@ -31,7 +31,7 @@ pub struct SaveData {
 }
 
 impl SaveData {
-    pub fn new(file_name: String, anime_name: String, url: String) -> Self {
+    const fn new(file_name: String, anime_name: String, url: String) -> Self {
         Self {
             file_name,
             anime_name,
@@ -42,15 +42,15 @@ impl SaveData {
     // This function saves the data to the database
     async fn save_data_to_db(&self) -> SurrealResult<()> {
         DB.use_ns("api-namespace").use_db("api-db").await?;
-        let data = SaveData::new(self.file_name.clone(), self.anime_name.clone(), self.url.clone());
-        let created: Vec<SaveData> = DB.create("api_uploads").content(data).await?; // NO USAR "-" COMO REEMPLAZO A LOS ESPACIOS AL CREAR EL RESOURCE, SURREALDB LO INTERPRETA COMO UNA OPERACIÓN
-        println!("Created: {:#?}", created);
+        let data = Self::new(self.file_name.clone(), self.anime_name.clone(), self.url.clone());
+        let created: Vec<Self> = DB.create("api_uploads").content(data).await?; // NO USAR "-" COMO REEMPLAZO A LOS ESPACIOS AL CREAR EL RESOURCE, SURREALDB LO INTERPRETA COMO UNA OPERACIÓN
+        println!("Created: {created:#?}");
         Ok(())
     }
 }
 
 impl <'a>GifData<'a> {
-    fn new(anime_name: &'a str, url: &'a str) -> Self {
+    const fn new(anime_name: &'a str, url: &'a str) -> Self {
         Self {
             anime_name,
             url,
@@ -60,10 +60,10 @@ impl <'a>GifData<'a> {
 
 impl UploadData<'_> {
     fn check_type(&self) -> RocketResult<()> {
-        if self.file.content_type() != Some(&rocket::http::ContentType::GIF) {
-            Err(BadRequest(String::from("File is not a gif")))
-        } else {
+        if self.file.content_type() == Some(&rocket::http::ContentType::GIF) {
             Ok(())
+        } else {
+            Err(BadRequest(String::from("File is not a gif")))
         }
     }
 
@@ -80,13 +80,13 @@ impl UploadData<'_> {
     }
 
     fn get_url(&self, file_name: &String) -> String {
-        format!("http://localhost:8000/api/{action}/{file_name}", action = self.action, file_name = file_name)
+        format!("http://0.0.0.0:8000/api/{action}/{file_name}", action = self.action, file_name = file_name)
     }
 }
 
 /// # Uso:
-/// `curl -X POST -F "file=@/path/to/file.gif" -F "action=action" http://localhost:8000/`
-/// `path: localhost:8000/file_name`
+/// `curl -X POST -F "file=@/path/to/file.gif" -F "action=action" http://0.0.0.0:8000/`
+/// `path: 0.0.0.0:8000/file_name`
 #[post("/", format = "multipart/form-data", data = "<upload>")]
 pub async fn upload(mut upload: Form<UploadData<'_>>) -> RocketResult<Json<String>> {
 
