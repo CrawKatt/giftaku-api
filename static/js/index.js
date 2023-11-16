@@ -16,7 +16,7 @@ form.addEventListener("submit", (e) => {
 
     axios({
         method: "post",
-        url: "http://localhost:8000/",
+        url: "http://0.0.0.0:8000/",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
     })
@@ -29,7 +29,7 @@ document.getElementById('get-file').addEventListener('click', function() {
     const selectedAction = document.getElementById('action-get').value; // Obtener la acción seleccionada desde el selector
 
     axios({
-        url: 'http://localhost:8000/api/' + selectedAction, // Concatenar la acción a la URL
+        url: 'http://0.0.0.0:8000/api/' + selectedAction, // Concatenar la acción a la URL
         method: 'GET',
         responseType: 'json', // important
     })
@@ -47,10 +47,8 @@ document.getElementById('get-file').addEventListener('click', function() {
             jsonContent.classList.add('json-content');
             jsonContent.textContent = JSON.stringify(response.data, null, 2);
 
-            // Limpiar el contenedor de GIFs
+            // Crear el contenedor de GIFs
             const gifContainer = document.getElementById('gif-container');
-            gifContainer.innerHTML = '';
-
             const image = document.createElement('img');
 
             // Agregar la imagen al contenedor de GIFs
@@ -79,26 +77,31 @@ document.getElementById('view-file').addEventListener('click', function() {
     const fileName = jsonData.url.split('/').pop();
 
     axios({
-        url: 'http://localhost:8000/api/' + selectedAction + '/' + fileName, // Concatenar la acción y el nombre del archivo a la URL
+        url: 'http://0.0.0.0:8000/api/' + selectedAction + '/' + fileName, // Concatenar la acción y el nombre del archivo a la URL
         method: 'GET',
         responseType: 'blob', // important
     })
-        .then(function (response) {
-            // Crear un objeto URL para el GIF
-            const gifUrl = URL.createObjectURL(response.data);
+    .then(function (response) {
+        // Crear un objeto URL para el GIF
+        const gifUrl = URL.createObjectURL(response.data);
 
-            // Limpiar el contenedor de la imagen antes de agregar la nueva imagen
-            const gifContainer = document.getElementById('gif-container');
-            gifContainer.innerHTML = '';
+        // Crear el contenedor de GIFs
+        const gifContainer = document.getElementById('gif-container');
 
-            // Crear un elemento de imagen y establecer su atributo src a la URL del GIF
-            const image = document.createElement('img');
-            image.src = gifUrl;
+        // Crear un elemento de imagen y establecer su atributo src a la URL del GIF
+        const image = document.createElement('img');
+        image.src = gifUrl;
 
-            // Agregar la imagen al contenedor de la imagen
-            gifContainer.appendChild(image);
-        })
-        .catch(function (error) {
-            console.error("Error fetching data:", error);
-        });
+        // Agregar la imagen al contenedor de la imagen
+        gifContainer.appendChild(image);
+    })
+    .catch(function (error) {
+        console.error("Error fetching data:", error);
+    });
+});
+
+// Botón hamburguesa
+document.getElementById('toggle-dashboard').addEventListener('click', function() {
+    const dashboardContainer = document.querySelector('.container');
+    dashboardContainer.classList.toggle('container-hidden');
 });
