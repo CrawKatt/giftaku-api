@@ -17,7 +17,7 @@ pub struct ResponseData {
 }
 
 impl ResponseData {
-    pub fn new(anime_name: String, url: String) -> Self {
+    const fn new(anime_name: String, url: String) -> Self {
         Self {
             anime_name,
             url,
@@ -61,11 +61,11 @@ pub async fn send_result(action: &str) -> Result<Json<ResponseData>, std::io::Er
             vec![]
         });
 
-    println!("Query result: {:#?}", query_result);
+    println!("Query result: {query_result:#?}");
 
     let anime_name = &query_result[0].anime_name;
     let anime_name = anime_name.to_owned();
-    let response_data = ResponseData::new(anime_name, format!("localhost:8000/api/{action}/{file_name}"));
+    let response_data = ResponseData::new(anime_name, format!("0.0.0.0:8000/api/{action}/{file_name}"));
 
     Ok(Json(response_data))
 }
@@ -84,7 +84,7 @@ pub async fn get_endpoints() -> String {
 
     // Agrega los endpoints predeterminados
     for (index, endpoint) in ENDPOINTS.iter().enumerate() {
-        json_endpoints.push_str(format!(r#""{}":{{"format":"gif"}}"#, endpoint).as_str());
+        json_endpoints.push_str(format!(r#""{endpoint}":{{"format":"gif"}}"#).as_str());
 
         // Agrega una coma si no es el último elemento
         if index < ENDPOINTS.len() - 1 {
