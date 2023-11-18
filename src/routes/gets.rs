@@ -60,8 +60,11 @@ pub async fn send_result(action: &str) -> Result<Json<ResponseData>, std::io::Er
             eprintln!("Error in send_result function: No results in query: {why}");
             vec![]
         });
-
     println!("Query result: {query_result:#?}");
+
+    if query_result.is_empty() {
+        return Err(std::io::Error::new(std::io::ErrorKind::Other, "Error in GET: No results in query"));
+    }
 
     let anime_name = &query_result[0].anime_name;
     let anime_name = anime_name.to_owned();
