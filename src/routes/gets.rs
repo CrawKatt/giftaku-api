@@ -5,7 +5,7 @@ use std::fs;
 use rand::Rng;
 use rocket::serde::json::Json;
 use serde::Serialize;
-use crate::DB;
+use crate::{DB, URL_HOST};
 use crate::routes::posts::SaveData;
 
 const ENDPOINTS: [&str; 5] = ["slap", "shoot", "kick", "punch", "cringe"];
@@ -42,13 +42,10 @@ fn random_file(path: &String) -> std::io::Result<String> {
 
 #[get("/api/<action>")]
 pub async fn send_result(action: &str) -> Result<Json<ResponseData>, std::io::Error> {
-    DB.use_ns("api-namespace").use_db("api-db").await.unwrap_or_else(|why| {
-        eprintln!("Could not connect to database: {why}");
-    });
+    DB.use_ns("api-namespace").use_db("api-db").await.ok();
 
     let path = format!("./upload/{action}");
     let file_name = random_file(&path)?;
-    println!("File name: {file_name}");
 
     // NO USAR "-" COMO REEMPLAZO A LOS ESPACIOS AL LLAMAR A LA TABLA EN EL FROM, SURREALDB LO INTERPRETA COMO UNA OPERACIÓN
     // SI OCURREN ERRORES, DEBUGEAR LA QUERY TOKENIZADA QUITANDO EL TIPO EN QUERY_RESULT Y REMOVIENDO EL AWAIT Y EL TAKE
@@ -68,7 +65,7 @@ pub async fn send_result(action: &str) -> Result<Json<ResponseData>, std::io::Er
 
     let anime_name = &query_result[0].anime_name;
     let anime_name = anime_name.to_owned();
-    let response_data = ResponseData::new(anime_name, format!("0.0.0.0:8000/api/{action}/{file_name}"));
+    let response_data = ResponseData::new(anime_name, format!("{}:8000/api/{action}/{file_name}", *URL_HOST));
 
     Ok(Json(response_data))
 }
