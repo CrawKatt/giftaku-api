@@ -15,6 +15,7 @@ WORKDIR /app
 COPY ./upload upload
 COPY ./Rocket.toml Rocket.toml
 COPY ./static static
+COPY ./migrations migrations
 COPY --from=builder /builder/target/release/giftaku_api .
 
 EXPOSE 8000

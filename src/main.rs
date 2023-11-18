@@ -1,6 +1,6 @@
 use rocket::{launch, routes};
 use rocket::fs::FileServer;
-use surrealdb::engine::local::{Db, Mem};
+use surrealdb::engine::local::{Db, File};
 use surrealdb::Surreal;
 use once_cell::sync::Lazy;
 
@@ -13,7 +13,11 @@ pub type RocketResult<T> = Result<T, rocket::response::status::BadRequest<String
 
 #[launch]
 async fn rocket() -> _ {
-    DB.connect::<Mem>(()).await.unwrap_or_else(|why| {
+    let url_host = dotenvy::var("URL_HOST");
+    println!("URL_HOST: {url_host:?}");
+
+    let db_path = std::env::current_dir().unwrap_or_default().join("./migrations");
+    DB.connect::<File>(db_path).await.unwrap_or_else(|why| {
         panic!("Could not connect to database: {why}");
     });
 
