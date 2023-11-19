@@ -8,7 +8,7 @@ use rocket::fs::TempFile;
 use rocket::serde::json::{Json, serde_json};
 use serde::{Deserialize, Serialize};
 use surrealdb::Result as SurrealResult;
-use crate::{DB, RocketResult};
+use crate::{DB, RocketResult, URL_HOST};
 
 #[derive(FromForm)]
 pub struct UploadData<'a> {
@@ -80,7 +80,7 @@ impl UploadData<'_> {
     }
 
     fn get_url(&self, file_name: &String) -> String {
-        format!("http://0.0.0.0:8000/api/{action}/{file_name}", action = self.action, file_name = file_name)
+        format!("http://{}:8000/api/{}/{}", *URL_HOST, self.action, file_name)
     }
 }
 

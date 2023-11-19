@@ -5,3 +5,5 @@
 /.idea
 /.idea/inspectionProfiles/Project_Default.xml
 /Cargo.lock
+/node_modules/
+/node_modules
