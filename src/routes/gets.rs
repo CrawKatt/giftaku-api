@@ -65,7 +65,7 @@ pub async fn send_result(action: &str) -> Result<Json<ResponseData>, std::io::Er
 
     let anime_name = &query_result[0].anime_name;
     let anime_name = anime_name.to_owned();
-    let response_data = ResponseData::new(anime_name, format!("{}:8000/api/{action}/{file_name}", *URL_HOST));
+    let response_data = ResponseData::new(anime_name, format!("{}/api/{action}/{file_name}", *URL_HOST));
 
     Ok(Json(response_data))
 }
