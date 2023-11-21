@@ -2,7 +2,7 @@
 const form = document.querySelector("#form");
 const fileInput = document.querySelector("#file");
 const actionSelect = document.querySelector("#action");
-const apiUrl = 'https://giftaku-api-production.up.railway.app/api/';
+const apiUrl = 'https://giftaku-api-dev-zbbt.4.us-1.fl0.io/api/';
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
