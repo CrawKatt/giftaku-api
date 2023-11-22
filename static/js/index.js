@@ -2,6 +2,7 @@
 const form = document.querySelector("#form");
 const fileInput = document.querySelector("#file");
 const actionSelect = document.querySelector("#action");
+const apiUrl = 'https://giftaku-api.onrender.com/api/';
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ form.addEventListener("submit", (e) => {
 
     axios({
         method: "post",
-        url: "http://0.0.0.0:8000/",
+        url: apiUrl,
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
     })
@@ -29,7 +30,7 @@ document.getElementById('get-file').addEventListener('click', function() {
     const selectedAction = document.getElementById('action-get').value; // Obtener la acción seleccionada desde el selector
 
     axios({
-        url: 'http://0.0.0.0:8000/api/' + selectedAction, // Concatenar la acción a la URL
+        url: apiUrl + selectedAction, // Concatenar la acción a la URL
         method: 'GET',
         responseType: 'json', // important
     })
@@ -77,7 +78,7 @@ document.getElementById('view-file').addEventListener('click', function() {
     const fileName = jsonData.url.split('/').pop();
 
     axios({
-        url: 'http://0.0.0.0:8000/api/' + selectedAction + '/' + fileName, // Concatenar la acción y el nombre del archivo a la URL
+        url: apiUrl + selectedAction + '/' + fileName, // Concatenar la acción y el nombre del archivo a la URL
         method: 'GET',
         responseType: 'blob', // important
     })

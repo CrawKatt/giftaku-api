@@ -80,7 +80,7 @@ impl UploadData<'_> {
     }
 
     fn get_url(&self, file_name: &String) -> String {
-        format!("http://{}:8000/api/{}/{}", *URL_HOST, self.action, file_name)
+        format!("https://{}/api/{}/{}", *URL_HOST, self.action, file_name)
     }
 }
 
