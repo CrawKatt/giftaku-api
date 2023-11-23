@@ -17,7 +17,7 @@ pub struct UploadData<'a> {
     anime_name: &'a str,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct GifData<'a> {
     anime_name: &'a str,
     url: &'a str,
@@ -80,6 +80,8 @@ impl UploadData<'_> {
     }
 
     fn get_url(&self, file_name: &String) -> String {
+        println!("URL_HOST: {:#?}", *URL_HOST);
+        println!("https://{}/api/{}/{}", *URL_HOST, self.action, file_name);
         format!("https://{}/api/{}/{}", *URL_HOST, self.action, file_name)
     }
 }
@@ -98,6 +100,7 @@ pub async fn upload(mut upload: Form<UploadData<'_>>) -> RocketResult<Json<Strin
 
     // Crea un objeto GifData y lo convierte a json
     let data = GifData::new(upload.anime_name, response);
+    println!("Data: {data:#?}");
 
     let database_data = SaveData::new(response.to_owned(), upload.anime_name.to_string(), upload.get_url(response));
     database_data.save_data_to_db().await.unwrap_or_else(|why| {
@@ -105,6 +108,6 @@ pub async fn upload(mut upload: Form<UploadData<'_>>) -> RocketResult<Json<Strin
     });
 
     // Envía la respuesta con el nombre del archivo en formato json
-    let json = serde_json::json!(data).to_string();
+    let json = serde_json::json!(database_data).to_string();
     Ok(Json(json))
 }
