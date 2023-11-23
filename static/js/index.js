@@ -3,7 +3,7 @@ const form = document.querySelector("#form");
 const fileInput = document.querySelector("#file");
 const actionSelect = document.querySelector("#action");
 const urlPost = "/";
-const urlGet = "/api";
+const urlGet = "/api/";
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
