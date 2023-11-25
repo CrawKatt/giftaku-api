@@ -6,10 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = { version = "0.5.0-rc.3", features = ["json"] }
-serde = { version = "1.0.189", features = ["derive"] }
-tokio = { version = "1.0", features = ["full"] }
-surrealdb = { version = "1.0.0", features = ["kv-mem"] }
-rand = "0.8.5"
-once_cell = "1.18.0"
-uuid = { version = "1.4.1", features = ["fast-rng", "v4"] }
+rocket = { version = "0.5.0-rc.3", features = ["json"], default-features = false }
+serde = { version = "1.0.189", features = ["derive"], default-features = false }
+surrealdb = { version = "1.0.0", features = ["kv-rocksdb", "rustls"], default-features = false }
+rand = { version = "0.8.5", default-features = false }
+once_cell = { version = "1.18.0", default-features = false }
+uuid = { version = "1.4.1", features = ["fast-rng", "v4"], default-features = false }
+dotenvy = { version = "0.15.7", default-features = false }

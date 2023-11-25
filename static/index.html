@@ -1,35 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>GIFtaku Dashboard</title>
-    <link rel="stylesheet" href="static/css/styles.css"/>
-  </head>
-  <body>
-    <h1>GIFtaku Dashboard</h1>
-    <form id="form">
-      <label>Select a gif: </label>
-      <input type="file" name="file" id="file" />
-      <br />
-      <label>Select an action: </label>
-        <select id="action">
-          <option value="slap">Slap</option>
-          <option value="kick">Kick</option>
-      </select>
-      <br />
-      <label>Enter anime name: </label>
-      <input type="text" id="anime_name" name="anime_name" />
-        <br />
-      <input type="submit" value ="Upload" />
-    </form>
-    <label>Select an action</label>
-    <select id="action-get">
+<head>
+  <meta charset="UTF-8" />
+  <title>GIFtaku Dashboard</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+</head>
+<body>
+  <header>
+    <button id="toggle-dashboard">☰</button>
+  </header>
+<div class="container">
+  <h1>GIFtaku Dashboard</h1>
+  <form id="form">
+    <label>Select a gif: </label>
+    <input type="file" name="file" id="file" />
+    <br />
+    <label>Select an action: </label>
+    <select id="action">
       <option value="slap">Slap</option>
       <option value="kick">Kick</option>
+      <option value="punch">Punch</option>
+      <option value="hug">Hug</option>
+      <option value="kiss">Kiss</option>
     </select>
-    <button id="get-file">Get File</button>
-    <div id="image-container"></div>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="static/js/index.js"></script>
-  </body>
+    <br />
+    <label>Enter anime name: </label>
+    <input type="text" id="anime_name" name="anime_name" />
+    <br />
+    <input type="submit" value="Upload" />
+  </form>
+  <label>Select an action</label>
+  <select id="action-get">
+    <option value="slap">Slap</option>
+    <option value="kick">Kick</option>
+    <option value="punch">Punch</option>
+    <option value="hug">Hug</option>
+    <option value="kiss">Kiss</option>
+  </select>
+  <button id="get-file">Get File</button>
+  <button id="view-file">View GIF</button>
+  <div id="image-container"></div>
+</div>
+<div id="gif-container"></div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="static/js/index.js"></script>
+</body>
 </html>
