@@ -1,3 +1,4 @@
 - [ ] Añadir sistema de autentificación para administradores
 - [ ] Cambiar localhost por un dominio en las routes
 - [ ] Añadir UPDATE y DELETE en la Dashboard
+- [ ] Crear un modal en el FrontEnd al hacer click en un GIF
