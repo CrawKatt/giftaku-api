@@ -1,2 +1,3 @@
-pub mod posts;
+pub mod authentication;
 pub mod gets;
+pub mod posts;

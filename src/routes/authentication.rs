@@ -31,22 +31,22 @@ impl<'a> FromRequest<'a> for TokenAuthenticate {
 
     async fn from_request(request: &'a Request<'_>) -> Outcome<Self, Self::Error> {
         if let Some(token) = request.headers().get_one("token") {
-            let secret_key = var("SIGNATURE_KEY").expect("You need to set secret key");
-            let data = decode::<Claims>(
+            let secret_key = var("SIGNATURE_KEY").expect("SIGNATURE_KEY is not set");
+            let validation_token = decode::<Claims>(
                 &token,
                 &DecodingKey::from_secret(secret_key.as_ref()),
                 &Validation::new(jsonwebtoken::Algorithm::HS256),
             );
 
-            if data.is_err() {
-                Outcome::Error((Status::InternalServerError, StatusClass::ClientError))
+            if validation_token.is_err() {
+                Outcome::Error((Status::Unauthorized, StatusClass::ClientError))
             } else {
                 Outcome::Success(TokenAuthenticate {
                     token: token.to_string(),
                 })
             }
         } else {
-            Outcome::Error((Status::InternalServerError, StatusClass::ClientError))
+            Outcome::Error((Status::Unauthorized, StatusClass::ClientError))
         }
     }
 }
@@ -69,9 +69,8 @@ pub fn authenticate() -> Json<TokenAuthenticate> {
         &Header::new(HS256),
         &claims,
         &EncodingKey::from_secret(signature.as_ref()),
-    );
+    )
+    .unwrap();
 
-    Json(TokenAuthenticate {
-        token: token.unwrap(),
-    })
+    Json(TokenAuthenticate { token })
 }
