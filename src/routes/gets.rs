@@ -3,6 +3,7 @@ use std::path::Path;
 use rocket::get;
 use std::fs;
 use rand::Rng;
+use rand::seq::SliceRandom;
 use rocket::serde::json::Json;
 use serde::Serialize;
 use crate::{DB, URL_HOST};
@@ -23,6 +24,11 @@ impl ResponseData {
             url,
         }
     }
+}
+
+#[derive(Serialize)]
+pub struct ResponseWrapper {
+    results: Vec<ResponseData>,
 }
 
 /// Buscar el GIF de forma aleatoria en `./upload/`
@@ -76,6 +82,34 @@ pub async fn get_gif(action: &str, file_name: &str) -> Option<NamedFile> {
     NamedFile::open(Path::new("./upload/")
         .join(action)
         .join(file_name)).await.ok()
+}
+
+#[get("/api/<action>?<amount>")]
+pub async fn get_gif_amount(action: &str, amount: usize) -> Result<Json<ResponseWrapper>, std::io::Error> {
+    DB.use_ns("api-namespace").use_db("api-db").await.ok();
+
+    let sql_query = "SELECT * FROM api_uploads";
+    let query_result: Vec<SaveData> = DB.query(sql_query).await.unwrap_or_else(|why| {
+        panic!("Could not query database: {why}");
+    }).take(0).unwrap_or_else(|why| {
+        eprintln!("Error in send_result function: No results in query: {why}");
+        vec![]
+    });
+
+    if query_result.is_empty() {
+        return Err(std::io::Error::new(std::io::ErrorKind::Other, "Error in GET: No results in query"));
+    }
+
+    let mut rng = rand::thread_rng();
+    let random_results: Vec<_> = query_result.choose_multiple(&mut rng, amount).collect();
+
+    let response_data: Vec<_> = random_results.into_iter().map(|result| {
+        let anime_name = result.anime_name.clone();
+        let file_name = result.file_name.clone();
+        ResponseData::new(anime_name, format!("https://{}/api/{action}/{file_name}", *URL_HOST))
+    }).collect();
+
+    Ok(Json(ResponseWrapper { results: response_data } ))
 }
 
 #[get("/api/endpoints")]
