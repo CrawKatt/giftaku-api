@@ -117,3 +117,8 @@ pub async fn index() -> Option<NamedFile> {
 pub async fn login() -> Option<NamedFile> {
     NamedFile::open("static/login/index.html").await.ok()
 }
+
+#[get("/register")]
+pub async fn register() -> Option<NamedFile> {
+    NamedFile::open("static/register/index.html").await.ok()
+}
