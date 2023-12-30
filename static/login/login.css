@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Doodle+Shadow&family=Rubik+Maps&family=Rubik+Scribble&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0 solid transparent;
+}
+
+body {
+  font-family: 'Rubik Doodle Shadow', sans-serif;
+  /* todo: use the server image */
+  background-image: url('https://s1.1zoom.me/big0/194/Coast_Little_girls_Clouds_532086_1280x720.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#login-card {
+  background: rgb(3, 3, 3);
+
+  border-radius: 16px;
+  max-width: 80vw;
+  padding: 20px;
+}
+
+#title {
+  color: #b315c2;
+  font-size: 45px;
+  text-align: center;
+  margin-top: -45px;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ff9dff;
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  background-color: #3b3b3b;
+  color: #b315c2;
+}
+
+.input-group__input:focus {
+  outline: none;
+  border: 1px solid #0086e4;
+}
+
+#username-label {
+  margin-top: 40px;
+}
+
+#form > label {
+  display: inline-block;
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #b315c2;
+  font-weight: 600;
+}
+
+#form {
+  position: relative;
+}
+
+/* CSS */
+#button {
+  position: absolute;
+  background-color: #b315c2;
+
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: 600;
+  height: 44px;
+  line-height: 1.15;
+  margin: 12px 0 0;
+  padding: 0 25px;
+  text-align: center;
+  width: 40%;
+  right: 20px;
+  font-family: 'Rubik Doodle Shadow', sans-serif;
+  bottom: -40px;
+}
+
+#effect {
+  position: absolute;
+  bottom: 180px;
+  right: -110px;
+}
+
+a {
+  color: white;
+}
